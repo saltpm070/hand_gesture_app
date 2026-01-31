@@ -15,8 +15,11 @@ jobs:
       - name: Build with Buildozer
         run: |
           export PATH=$PATH:$HOME/.local/bin
-          buildozer android debug
-
+          # This line accepts the Android licenses automatically to prevent Error 100
+          yes | buildozer android signatures || true
+          # 'warn_on_root=0' tells Buildozer it is okay to run on GitHub's servers
+          buildozer --warn_on_root=0 android debug
+          
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
