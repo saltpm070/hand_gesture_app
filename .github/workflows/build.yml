@@ -2,7 +2,6 @@ name: Build Android APK
 on: [push]
 jobs:
   build:
-    # Using 22.04 because it has the libraries (libtinfo5) that Buildozer needs
     runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v4
@@ -16,10 +15,9 @@ jobs:
       - name: Build with Buildozer
         run: |
           export PATH=$PATH:$HOME/.local/bin
-          # Automatically accept Android licenses
-          yes | buildozer android signatures || true
-          # Run the build and bypass the root user warning
-          buildozer --warn_on_root=0 android debug
+          # This 'yes' command is critical; it answers 'y' to every SDK license prompt
+          # We also add the 'debug' log level so we can see exactly what happens
+          yes | buildozer --warn_on_root=0 android debug
           
       - name: Upload APK
         uses: actions/upload-artifact@v4
