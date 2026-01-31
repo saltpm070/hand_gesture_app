@@ -5,10 +5,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      
+      # We are switching to a slightly different method to avoid the "chown" bug
       - name: Build with Buildozer
-        uses: ArtemSBulgakov/buildozer-action@v1
+        uses: ArtemSBulgakov/buildozer-action@v1.6.1
         with:
           command: buildozer android debug
+          buildozer_version: master
+      
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
