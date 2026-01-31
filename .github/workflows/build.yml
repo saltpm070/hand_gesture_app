@@ -2,25 +2,23 @@ name: Build Android APK
 on: [push]
 jobs:
   build:
-    runs-on: ubuntu-24.04
+    # Using 22.04 because it has the libraries (libtinfo5) that Buildozer needs
+    runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v4
 
       - name: Install Dependencies
         run: |
           sudo apt update
-          # Swapped libtinfo5 for libtinfo6 for Ubuntu 24.04 compatibility
-          sudo apt install -y git zip unzip openjdk-17-jdk python3-pip autoconf libtool pkg-config zlib1g-dev libncurses5-dev libncursesw5-dev libtinfo6 cmake libffi-dev libssl-en
-          
-          # Create a symbolic link so apps looking for libtinfo5 find version 6
-          sudo ln -s /usr/lib/x86_64-linux-gnu/libtinfo.so.6 /usr/lib/x86_64-linux-gnu/libtinfo.so.5 || true
-          
+          sudo apt install -y git zip unzip openjdk-17-jdk python3-pip autoconf libtool pkg-config zlib1g-dev libncurses5-dev libncursesw5-dev libtinfo5 cmake libffi-dev libssl-dev
           pip3 install --user --upgrade buildozer cython virtualenv
 
       - name: Build with Buildozer
         run: |
           export PATH=$PATH:$HOME/.local/bin
+          # Automatically accept Android licenses
           yes | buildozer android signatures || true
+          # Run the build and bypass the root user warning
           buildozer --warn_on_root=0 android debug
           
       - name: Upload APK
