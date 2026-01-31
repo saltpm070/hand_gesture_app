@@ -6,8 +6,8 @@ source.dir = .
 source.include_exts = py,png,jpg,kv,atlas
 version = 0.1
 
-# Updated requirements for better compatibility
-requirements = python3,kivy==2.3.0,mediapipe,opencv-python,numpy,pillow
+# Pinned versions to prevent conflicts
+requirements = python3,kivy==2.3.0,mediapipe,opencv-python,numpy==1.26.4,pillow,cython==0.29.33
 
 orientation = portrait
 android.permissions = CAMERA
