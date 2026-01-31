@@ -9,15 +9,18 @@ jobs:
       - name: Install Dependencies
         run: |
           sudo apt update
-          sudo apt install -y git zip unzip openjdk-17-jdk python3-pip autoconf libtool pkg-config zlib1g-dev libncurses5-dev libncursesw5-dev libtinfo5 cmake libffi-dev libssl-dev
+          # Swapped libtinfo5 for libtinfo6 for Ubuntu 24.04 compatibility
+          sudo apt install -y git zip unzip openjdk-17-jdk python3-pip autoconf libtool pkg-config zlib1g-dev libncurses5-dev libncursesw5-dev libtinfo6 cmake libffi-dev libssl-en
+          
+          # Create a symbolic link so apps looking for libtinfo5 find version 6
+          sudo ln -s /usr/lib/x86_64-linux-gnu/libtinfo.so.6 /usr/lib/x86_64-linux-gnu/libtinfo.so.5 || true
+          
           pip3 install --user --upgrade buildozer cython virtualenv
 
       - name: Build with Buildozer
         run: |
           export PATH=$PATH:$HOME/.local/bin
-          # This line accepts the Android licenses automatically to prevent Error 100
           yes | buildozer android signatures || true
-          # 'warn_on_root=0' tells Buildozer it is okay to run on GitHub's servers
           buildozer --warn_on_root=0 android debug
           
       - name: Upload APK
